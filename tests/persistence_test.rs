@@ -93,7 +93,12 @@ fn save_load_roundtrip_with_input() {
 }
 
 #[test]
-fn loaded_crystal_continues_identically() {
+fn loaded_crystal_continues_stably() {
+    // NOTE: Until persistence saves weights (w, win, horizon_unitary),
+    // a loaded crystal has the same state but DIFFERENT dynamics than
+    // the original. We can verify state restoration and stable continuation,
+    // but NOT identical future trajectories. When Bug #1 (weight persistence)
+    // is fixed, upgrade this test to compare trajectories.
     let mut c = FibonacciCrystal::new(60, 8, 0.6);
     for _ in 0..100 {
         c.tick(None);
@@ -103,23 +108,20 @@ fn loaded_crystal_continues_identically() {
     let path = PathBuf::from(tmp.path());
     persistence::save(&c, &path).unwrap();
 
-    // Clone original and continue
-    let mut c_original = FibonacciCrystal::new(60, 8, 0.6);
-    // Manually copy state (since we can't clone)
+    // Snapshot emotions from the original BEFORE any more ticks
     let e_before = Emotions::from_crystal(&c);
 
-    // Load and continue
+    // Load into fresh crystal and verify state matches
     let mut c_loaded = FibonacciCrystal::new(60, 8, 0.6);
     persistence::load(&mut c_loaded, &path).unwrap();
 
-    // Both should produce same emotions
     let e_loaded = Emotions::from_crystal(&c_loaded);
     assert!(
         emotions_match(&e_before, &e_loaded),
         "Loaded crystal has different emotions than original"
     );
 
-    // Tick the loaded crystal — it should run fine
+    // Tick the loaded crystal — it should remain stable on the hypersphere
     for i in 0..100 {
         c_loaded.tick(None);
         let n: f32 = c_loaded
