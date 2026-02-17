@@ -1,0 +1,22 @@
+# Build artifacts
+target/
+__pycache__/
+*.pyc
+
+# State files (contain personal crystal state)
+*.bin
+*.pt
+crystal_state*
+
+# Environment / secrets
+.env
+*.env
+
+# Editor
+.DS_Store
+*.swp
+*.swo
+*~
+
+# EMOTION.md is personal state, not source
+EMOTION.md
