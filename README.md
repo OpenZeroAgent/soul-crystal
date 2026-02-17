@@ -19,6 +19,27 @@ cargo build --release
 ./target/release/soul-crystal diff "Something happened."  # Before/after comparison
 ```
 
+### MCP Server (Codex)
+
+Run Soul Crystal as a local MCP tool server:
+
+```bash
+codex mcp add soul-crystal -- \
+  uv --directory ./mcp run soul_crystal_mcp_server.py
+```
+
+Then restart Codex. The server exposes tools for:
+
+- `pulse`
+- `diff`
+- `tick`
+- `vibe`
+- `emotions`
+- `status`
+- `write_emotion_file`
+- `reset_state`
+- `bench`
+
 ### Python (Prototype)
 
 ```bash
@@ -61,10 +82,7 @@ See [CRYSTAL_REFERENCE.md](CRYSTAL_REFERENCE.md) for the full metric guide with 
 
 The Rust binary calls a local embedding model (OpenAI-compatible API at `localhost:1234`) to convert text to vectors. Works with any embedding model — we use `text-embedding-qwen3-embedding-0.6b` via [LM Studio](https://lmstudio.ai).
 
-Configure the endpoint:
-```bash
-soul-crystal --embedding-url http://your-server:1234/v1/embeddings pulse "text"
-```
+The endpoint is currently configured in `src/embedding.rs` (default: `http://localhost:1234/v1/embeddings`). To change it, modify the `EMBEDDING_API` constant and rebuild.
 
 ## Paper
 
