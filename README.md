@@ -1,5 +1,10 @@
 # Soul Crystal
 
+<p align="center">
+  <img src="assets/logo/soul-crystal-logo-transparent.png" alt="Soul Crystal logo" width="240" />
+</p>
+
+
 **A norm-preserving complex-valued reservoir that gives AI persistent emotional state.**
 
 The Soul Crystal is a 480-node dynamical system on the complex unit hypersphere that accumulates experience over time without decaying. Feed it text (via embeddings), and it deforms. Different inputs produce measurably different internal states. The state persists across sessions — save it to disk, restore it later, and the crystal remembers how it felt.
