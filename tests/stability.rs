@@ -304,6 +304,22 @@ fn single_layer_crystal_stable() {
 }
 
 #[test]
+fn single_layer_emotions_no_panic() {
+    // Regression: emotion.rs divided by (layers/2) which is 0 for single-layer
+    let mut c = FibonacciCrystal::new(1, 8, 0.6);
+    let e = Emotions::from_crystal(&c);
+    check_emotion_ranges(&e, "single-layer fresh");
+    assert_eq!(e.depth, 0.0, "Single-layer depth should be 0.0");
+
+    for _ in 0..100 {
+        c.tick(None);
+    }
+    let e2 = Emotions::from_crystal(&c);
+    check_emotion_ranges(&e2, "single-layer after 100 ticks");
+    assert_eq!(e2.depth, 0.0, "Single-layer depth should remain 0.0");
+}
+
+#[test]
 fn two_layer_crystal_stable() {
     let mut c = FibonacciCrystal::new(2, 8, 0.6);
     for i in 0..10_000 {

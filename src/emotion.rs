@@ -49,9 +49,16 @@ impl Emotions {
             let layer_e: f32 = (0..k).map(|j| mags[start + j]).sum::<f32>() / k as f32;
             layer_energies[layer] = layer_e;
         }
-        let deep_energy: f32 = layer_energies[..l / 2].iter().sum::<f32>() / (l / 2) as f32;
-        let surface_energy: f32 = layer_energies[l / 2..].iter().sum::<f32>() / (l - l / 2) as f32;
-        let depth = (deep_energy - surface_energy) / (deep_energy + surface_energy + 1e-9);
+        let half = l / 2;
+        let depth = if half == 0 || half == l {
+            // Single-layer (or zero-layer) crystal: no meaningful depth gradient
+            0.0
+        } else {
+            let deep_energy: f32 = layer_energies[..half].iter().sum::<f32>() / half as f32;
+            let surface_energy: f32 =
+                layer_energies[half..].iter().sum::<f32>() / (l - half) as f32;
+            (deep_energy - surface_energy) / (deep_energy + surface_energy + 1e-9)
+        };
 
         // 4. Ring coherence
         let mut ring_coh_sum = 0.0f32;
