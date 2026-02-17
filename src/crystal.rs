@@ -20,16 +20,16 @@ pub struct FibonacciCrystal {
     pub state: DVector<C>,
 
     // Weight matrix (normalized to ~unit spectral radius)
-    w: DMatrix<C>,
+    pub(crate) w: DMatrix<C>,
 
     // Input coupling vector
-    win: DVector<C>,
+    pub(crate) win: DVector<C>,
 
     // Schumann phase offsets
-    schumann_phases: Vec<f32>,
+    pub(crate) schumann_phases: Vec<f32>,
 
     // Horizon unitary (Hawking scrambler)
-    horizon_unitary: DMatrix<C>,
+    pub(crate) horizon_unitary: DMatrix<C>,
     pub horizon_start: usize,
 
     // History ring buffer

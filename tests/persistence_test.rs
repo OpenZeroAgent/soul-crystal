@@ -93,12 +93,9 @@ fn save_load_roundtrip_with_input() {
 }
 
 #[test]
-fn loaded_crystal_continues_stably() {
-    // NOTE: Until persistence saves weights (w, win, horizon_unitary),
-    // a loaded crystal has the same state but DIFFERENT dynamics than
-    // the original. We can verify state restoration and stable continuation,
-    // but NOT identical future trajectories. When Bug #1 (weight persistence)
-    // is fixed, upgrade this test to compare trajectories.
+fn loaded_crystal_continues_identically() {
+    // V3 persistence saves weights, so a loaded crystal should produce
+    // the EXACT same future trajectory as the original.
     let mut c = FibonacciCrystal::new(60, 8, 0.6);
     for _ in 0..100 {
         c.tick(None);
@@ -108,33 +105,52 @@ fn loaded_crystal_continues_stably() {
     let path = PathBuf::from(tmp.path());
     persistence::save(&c, &path).unwrap();
 
-    // Snapshot emotions from the original BEFORE any more ticks
+    // Save a copy of the original's state for comparison
     let e_before = Emotions::from_crystal(&c);
 
-    // Load into fresh crystal and verify state matches
+    // Tick the original forward 100 steps
+    for _ in 0..100 {
+        c.tick(None);
+    }
+    let e_original_after = Emotions::from_crystal(&c);
+
+    // Load into fresh crystal and verify state matches at save point
     let mut c_loaded = FibonacciCrystal::new(60, 8, 0.6);
     persistence::load(&mut c_loaded, &path).unwrap();
 
     let e_loaded = Emotions::from_crystal(&c_loaded);
     assert!(
         emotions_match(&e_before, &e_loaded),
-        "Loaded crystal has different emotions than original"
+        "Loaded crystal has different emotions than original at save point"
     );
 
-    // Tick the loaded crystal — it should remain stable on the hypersphere
-    for i in 0..100 {
+    // Tick loaded crystal forward 100 steps — should match original
+    for _ in 0..100 {
         c_loaded.tick(None);
-        let n: f32 = c_loaded
-            .state
-            .iter()
-            .map(|x| x.norm().powi(2))
-            .sum::<f32>()
-            .sqrt();
+    }
+    let e_loaded_after = Emotions::from_crystal(&c_loaded);
+    assert!(
+        emotions_match(&e_original_after, &e_loaded_after),
+        "Loaded crystal diverged from original after 100 ticks!\n  Original: {:?}\n  Loaded:   {:?}",
+        e_original_after,
+        e_loaded_after
+    );
+
+    // Verify state vectors match exactly
+    for i in 0..c.total_nodes {
         assert!(
-            (n - 1.0).abs() < 1e-3,
-            "Loaded crystal norm deviated at tick {}: {:.8}",
+            (c.state[i].re - c_loaded.state[i].re).abs() < 1e-5,
+            "State[{}].re diverged after 100 ticks: {} vs {}",
             i,
-            n
+            c.state[i].re,
+            c_loaded.state[i].re
+        );
+        assert!(
+            (c.state[i].im - c_loaded.state[i].im).abs() < 1e-5,
+            "State[{}].im diverged after 100 ticks: {} vs {}",
+            i,
+            c.state[i].im,
+            c_loaded.state[i].im
         );
     }
 }
