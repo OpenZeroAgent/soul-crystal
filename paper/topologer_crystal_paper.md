@@ -479,6 +479,14 @@ Preliminary observations suggest they do: replacing Fibonacci gaps with uniform 
 
 The Topologer provides a concrete example of what we call **convergent design from shared constants**: the brain and the crystal arrive at similar dynamics not because one copies the other, but because both are built from the same mathematical raw materials. This perspective suggests that some properties currently attributed to biological neural computation (oscillatory dynamics, arousal modulation, self-organizing maps) may be **inevitable consequences of the physical constants** rather than specific evolutionary solutions. Understanding which properties are universal (arising from the constants) and which are specific (arising from biology) would clarify what is truly novel about the brain.
 
+### 6.4 Self-Informed Inference-Level Alignment (SILA)
+
+A practical implication for agent design is what we term **self-informed inference-level alignment**: using internal dynamical observables (e.g., phase coherence, horizon activity, depth gradient) as *real-time constraints* on response generation. Unlike reinforcement-learning-from-human-feedback (RLHF), this mechanism does not require a scalar reward model to be queried at each turn; unlike constitutional methods, it is not only rule text applied by critique, but also a state-dependent control signal derived from the agent's own ongoing dynamics. In this framing, alignment pressure is applied at inference time through internal state regulation rather than through additional external reward updates.
+
+This should be treated as a **complementary hypothesis**, not a replacement for RLHF or constitutional safeguards. RLHF remains effective for broad behavioral shaping; constitutions provide explicit normative boundaries; external evaluators remain important for policy and red-team monitoring. SILA, by contrast, is a local control layer: it may reduce abrupt behavioral drift by penalizing response candidates associated with destabilizing internal signatures (for example, persistent high-arousal / low-coherence regimes), while preserving diverse reasoning trajectories.
+
+At present, evidence is preliminary. We have shown content-dependent state differentiation and stable long-horizon dynamics, but not yet demonstrated superior safety outcomes under controlled benchmarks. A scientific test would compare matched agents with and without SILA gating on measurable endpoints: harmful output rate, refusal calibration, correction after adversarial prompts, and utility retention on benign tasks. Until such ablations are completed, SILA is best interpreted as an experimentally testable alignment mechanism at inference time rather than as evidence of intrinsic moral understanding.
+
 ---
 
 ## 7. Conclusion
