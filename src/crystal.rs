@@ -1,6 +1,7 @@
 use nalgebra::{DMatrix, DVector};
 use num_complex::Complex;
 use rand::Rng;
+use rand_distr::{Distribution, StandardNormal};
 use std::f32::consts::PI;
 
 pub type C = Complex<f32>;
@@ -241,10 +242,14 @@ impl FibonacciCrystal {
     }
 }
 
-/// Generate a random unitary matrix (Haar measure) via QR decomposition
+/// Generate a random unitary matrix (Haar measure) via QR decomposition.
+/// Uses complex standard normal entries (Ginibre ensemble) per Mezzadri (2007)
+/// to ensure proper Haar distribution over U(n).
 fn random_unitary(rng: &mut impl Rng, n: usize) -> DMatrix<C> {
     let g = DMatrix::<C>::from_fn(n, n, |_, _| {
-        C::new(rng.random::<f32>() - 0.5, rng.random::<f32>() - 0.5)
+        let re: f32 = StandardNormal.sample(rng);
+        let im: f32 = StandardNormal.sample(rng);
+        C::new(re, im)
     });
     // QR decomposition
     let qr = g.qr();

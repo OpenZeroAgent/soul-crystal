@@ -8,6 +8,7 @@ description = "Norm-preserving topological reservoir for emotional state — the
 nalgebra = { version = "0.33", features = ["serde-serialize"] }
 num-complex = { version = "0.4", features = ["serde"] }
 rand = "0.9"
+rand_distr = "0.5"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 bincode = "1"
